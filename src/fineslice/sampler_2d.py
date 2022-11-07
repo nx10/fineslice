@@ -3,7 +3,7 @@ from typing import Tuple, Optional
 import numpy as np
 
 from .filter import Filter
-from .types import t_filters
+from .types import Filters, Texture3DLike, AffineLike, as_texture_3d, as_affine
 from .utils import eye_1d, cuboid, cuboid_edges
 from .datacube import Datacube
 
@@ -178,15 +178,15 @@ def _sample_2d(  # pylint: disable=too-many-locals
 
 
 def sample_2d(
-        texture: np.ndarray,
-        affine: np.ndarray,
+        texture: Texture3DLike,
+        affine: AffineLike,
         sample_axis: int,
         sample_axis_offset: float,
         sample_bounds: Optional[np.ndarray] = None,
         sample_dims: Optional[Tuple[float, float]] = None,
-        texture_filter: t_filters = Filter.NEAREST):
+        texture_filter: Filters = Filter.NEAREST):
     return _sample_2d(
-        data=Datacube(texture, affine),
+        data=Datacube(as_texture_3d(texture), as_affine(affine)),
         axis=sample_axis,
         axis_offset=sample_axis_offset,
         bounds=sample_bounds,

@@ -3,28 +3,9 @@ import numpy as np
 import fineslice as fine
 
 
-def _affine_identity():
-    return np.array([
-        [1, 0, 0, 0],
-        [0, 1, 0, 0],
-        [0, 0, 1, 0],
-        [0, 0, 0, 1]
-    ], dtype=int)
-
-
-def test_slicer_scalar():
-    texture = np.reshape(np.arange(3 * 3 * 3, dtype=int), (3, 3, 3))
-    affine = _affine_identity()
-
-    assert fine.sample_0d(texture, affine, (0, 0, 0)) == 0
-    assert fine.sample_0d(texture, affine, (1, 0, 0)) == 9
-    assert fine.sample_0d(texture, affine, (0, 1, 0)) == 3
-    assert fine.sample_0d(texture, affine, (0, 0, 1)) == 1
-
-
 def test_slicer_2d():
     texture = np.reshape(np.arange(3 * 3 * 3, dtype=np.float64), (3, 3, 3))
-    affine = _affine_identity()
+    affine = fine.affine_identity()
 
     rastered_0_0, _, _ = fine.sample_2d(texture, affine, sample_axis=0, sample_axis_offset=0)
     rastered_0_1, axis_lims_0_1, _ = fine.sample_2d(texture, affine, sample_axis=0, sample_axis_offset=1)

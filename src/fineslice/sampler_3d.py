@@ -4,11 +4,11 @@ import numpy as np
 
 from .datacube import Datacube
 from .filter import Filter
-from .types import t_spoints, t_filters
+from .types import Texture3DLike, AffineLike, as_texture_3d, as_affine, Filters, SamplerPoints
 from .utils import cuboid, cuboid_edges_axes, cuboid_from_bounds
 
 
-def _minmax_spoints(points: t_spoints):
+def _minmax_spoints(points: SamplerPoints):
     return np.column_stack((np.min(points, axis=1), np.max(points, axis=1)))
 
 
@@ -81,13 +81,13 @@ def _sample_3d(  # pylint: disable=too-many-locals
 
 
 def sample_3d(
-        texture: np.ndarray,
-        affine: np.ndarray,
+        texture: Texture3DLike,
+        affine: AffineLike,
         sample_bounds: Optional[np.ndarray] = None,
         sample_dims: Optional[Tuple[float, float, float]] = None,
-        texture_filter: t_filters = Filter.NEAREST):
+        texture_filter: Filters = Filter.NEAREST):
     return _sample_3d(
-        data=Datacube(texture, affine),
+        data=Datacube(as_texture_3d(texture), as_affine(affine)),
         bounds=sample_bounds,
         sampling_dims=sample_dims
     )

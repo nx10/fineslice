@@ -3,7 +3,7 @@ from typing import Union, Iterable, Any
 import numpy as np
 import numpy.typing as npt
 
-from .types import t_spoints
+from .types import SamplerPoints
 
 
 def rep_tuple(n: int, t: Any) -> tuple:
@@ -72,7 +72,7 @@ def cuboid(shape: Iterable, dtype: npt.DTypeLike = None) -> np.ndarray:
     ], dtype=dtype if dtype is not None else np.float64).T
 
 
-def cuboid_from_bounds(bounds: t_spoints, dtype: npt.DTypeLike = None) -> np.ndarray:
+def cuboid_from_bounds(bounds: SamplerPoints, dtype: npt.DTypeLike = None) -> np.ndarray:
     """
     Get vertices of a cuboid defined by bounds.
 
