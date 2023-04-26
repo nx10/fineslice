@@ -4,7 +4,7 @@ import numpy as np
 
 
 def bounds_manual(p1, p2):
-    return np.vstack((np.vstack((p1, p2)).T, (0, 0)))
+    return np.vstack((np.vstack((p1, p2)).T, (0, 0)))  # TODO should this be (1,1) ??
 
 
 def bounds_where(texture_bool: np.ndarray, affine: np.ndarray, margin=0.):

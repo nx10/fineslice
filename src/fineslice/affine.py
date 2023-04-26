@@ -1,8 +1,10 @@
+from typing import Union
+
 import numpy as np
 
-from fineslice.types import Affine
+from .types import Affine
 
-NpScalar = int | float | np.ndarray
+NpScalar = Union[int, float, np.ndarray]
 
 
 def affine_invert(aff: Affine) -> Affine:

@@ -1,7 +1,7 @@
 import numpy as np
 
 
-def plot_poly(vertices, edges=None, inters=None, labels=None):
+def plot_poly(vertices, edges=None, inters=None, labels=None, show=False):
     """
     Plot polygon
     :param vertices:
@@ -25,5 +25,8 @@ def plot_poly(vertices, edges=None, inters=None, labels=None):
 
     if inters is not None:
         ax.scatter3D(inters[0], inters[1], inters[2], c="red")
+
+    if show:
+        plt.show()
 
     return ax

@@ -2,36 +2,40 @@ from typing import Optional, Tuple
 
 import numpy as np
 
-from .datacube import Datacube
-from .filter import Filter
-from .types import Texture3DLike, AffineLike, as_texture_3d, as_affine, Filters, SamplerPoints
-from .utils import cuboid, cuboid_edges_axes, cuboid_from_bounds
+from .types import Texture3D, check_valid_texture_3d, AffineLike, as_affine, SamplerPoints
+from .cuboid import cuboid, cuboid_edges_axes, cuboid_from_bounds
 
 
 def _minmax_spoints(points: SamplerPoints):
     return np.column_stack((np.min(points, axis=1), np.max(points, axis=1)))
 
 
-def _sample_3d(  # pylint: disable=too-many-locals
-        data: Datacube,
-        bounds: Optional[np.ndarray] = None,
-        sampling_dims: Optional[Tuple] = None) \
-        -> Optional[Tuple[np.ndarray, np.ndarray]]:
-    corners_ds = cuboid(data.image.shape)
+def sample_3d(
+        texture: Texture3D,
+        affine: AffineLike,
+        out_bounds: Optional[np.ndarray] = None,
+        out_dims: Optional[Tuple[float, float, float]] = None):
+
+    check_valid_texture_3d(texture)
+
+    affine = as_affine(affine)
+    affine_inv = np.linalg.inv(affine)
+
+    corners_ds = cuboid(texture.shape)
     cube_edges_axes = cuboid_edges_axes()
 
     # Determine sampling cube
-    if bounds is not None:
-        sampling_cube_bounds_rs = bounds
+    if out_bounds is not None:
+        sampling_cube_bounds_rs = out_bounds
     else:
         # Minmax bounds after transforming to RS
-        sampling_cube_bounds_rs = _minmax_spoints(data.transform(corners_ds))
+        sampling_cube_bounds_rs = _minmax_spoints(np.dot(affine, corners_ds))
 
     sampling_cube_rs = cuboid_from_bounds(sampling_cube_bounds_rs)
-    sampling_cube_ds = data.transform_inv(sampling_cube_rs).astype(int)  # todo
+    sampling_cube_ds = np.dot(affine_inv, sampling_cube_rs).astype(int)  # todo
 
     # Sampling grid dimensions (data space)
-    if sampling_dims is None:
+    if out_dims is None:
         axis_len = np.zeros((3,))
         for v0, v1, va in cube_edges_axes:
             edge_len = np.linalg.norm(sampling_cube_ds[:, v0] - sampling_cube_ds[:, v1])
@@ -39,7 +43,7 @@ def _sample_3d(  # pylint: disable=too-many-locals
                 axis_len[va] = edge_len
         axis_len = axis_len.astype(int)  # todo
     else:
-        axis_len = sampling_dims
+        axis_len = out_dims
 
     minmax_data = sampling_cube_bounds_rs
     minmax_data_n = axis_len
@@ -63,15 +67,15 @@ def _sample_3d(  # pylint: disable=too-many-locals
     # print("sampling_grid", sample_grid.shape)
 
     # transform sampling grid (and round for nearest neighbour TODO)
-    sample_grid_trans = data.transform_inv(sample_grid).astype(int)
+    sample_grid_trans = np.dot(affine_inv, sample_grid).astype(int)
 
     # clip sampling grid TODO
     for i in range(3):
-        sample_grid_trans[i] = sample_grid_trans[i].clip(0, data.image.shape[i] - 1)
+        sample_grid_trans[i] = sample_grid_trans[i].clip(0, texture.shape[i] - 1)
 
     x = sample_grid_trans[0:3].reshape((3, minmax_data_n[0], minmax_data_n[1], minmax_data_n[2]))
 
-    rastered = data.image[x[0], x[1], x[2]]
+    rastered = texture[x[0], x[1], x[2]]
 
     # Todo: convert rounded (for nearest neighbour) estimates
     #  back forth to get more accurate axis_lims
@@ -80,14 +84,4 @@ def _sample_3d(  # pylint: disable=too-many-locals
     return rastered, axis_lims  # , RAS_SPACE_LABELS
 
 
-def sample_3d(
-        texture: Texture3DLike,
-        affine: AffineLike,
-        sample_bounds: Optional[np.ndarray] = None,
-        sample_dims: Optional[Tuple[float, float, float]] = None,
-        texture_filter: Filters = Filter.NEAREST):
-    return _sample_3d(
-        data=Datacube(as_texture_3d(texture), as_affine(affine)),
-        bounds=sample_bounds,
-        sampling_dims=sample_dims
-    )
+

@@ -11,21 +11,19 @@ It does not make any assumptions about the data. Pass _any_ image texture and af
 - Automatically finds optimal dimensions
 - Only depends on NumPy
 
-## TODO
+### Usage with `nibabel`
 
-`fineslice` is an early prototype and far from ready for production use.
+For the best performance directly pass in the `nibabel` data object as a texture:
 
-Sampling
+```Python
+import nibabel as nib
+import fineslice
 
-- [x] 0D / point
-- [ ] 1D / line
-- [x] 2D / rectangle
-- [x] 3D / cube
+img = nib.load('my_image.nii.gz')
 
-Texture filtering (interpolation)
-
-- [x] Nearest-neighbour
-- [ ] (Tri-)Linear
-- [ ] (Tri-)Quadratic
-- [ ] (Tri-)Cubic
-- [ ] Spline
+out = fineslice.sample_0d(
+    texture=img.dataobj,
+    affine=img.affine,
+    out_position=(0, 0, 0)
+)
+```
