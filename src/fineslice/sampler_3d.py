@@ -2,8 +2,8 @@ from typing import Optional, Tuple
 
 import numpy as np
 
-from .types import Texture3D, check_valid_texture_3d, AffineLike, as_affine, SamplerPoints
 from .cuboid import cuboid, cuboid_edges_axes, cuboid_from_bounds
+from .types import Texture3D, check_valid_texture_3d, AffineLike, as_affine, SamplerPoints, SamplerResultND
 
 
 def _minmax_spoints(points: SamplerPoints):
@@ -14,8 +14,7 @@ def sample_3d(
         texture: Texture3D,
         affine: AffineLike,
         out_bounds: Optional[np.ndarray] = None,
-        out_dims: Optional[Tuple[float, float, float]] = None):
-
+        out_dims: Optional[Tuple[float, float, float]] = None) -> Optional[SamplerResultND]:
     check_valid_texture_3d(texture)
 
     affine = as_affine(affine)
@@ -81,7 +80,4 @@ def sample_3d(
     #  back forth to get more accurate axis_lims
     axis_lims = sampling_cube_bounds_rs[0:3]
 
-    return rastered, axis_lims  # , RAS_SPACE_LABELS
-
-
-
+    return SamplerResultND(rastered, axis_lims)  # , RAS_SPACE_LABELS

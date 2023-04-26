@@ -1,4 +1,4 @@
-from typing import Tuple, Union, Iterable, Protocol
+from typing import Tuple, Union, Iterable, Protocol, NamedTuple, Any
 
 import numpy as np
 
@@ -112,3 +112,19 @@ def as_sampler_points(sampler_points_like: SamplerPointsLike) -> SamplerPoints:
     return np.vstack([
         ps, np.ones(ps.shape[1])
     ])
+
+
+# Result
+
+SamplerResult0D = Any
+"""Return sampled point values directly."""
+
+
+class SamplerResultND(NamedTuple):
+    """Returned by fineslice.sample_*d(...) methods."""
+
+    texture: np.ndarray
+    """Return texture."""
+
+    coordinates: np.ndarray
+    """Coordinates of the returned texture. [(min, max), ...]"""

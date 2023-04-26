@@ -17,11 +17,11 @@ For the best performance directly pass in the `nibabel` data object as a texture
 
 ```Python
 import nibabel as nib
-import fineslice
+import fineslice as fine
 
 img = nib.load('my_image.nii.gz')
 
-out = fineslice.sample_0d(
+out = fine.sample_0d(
     texture=img.dataobj,
     affine=img.affine,
     out_position=(0, 0, 0)

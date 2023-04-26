@@ -4,17 +4,18 @@ import numpy as np
 
 from .cuboid import cuboid, cuboid_edges
 from .intersect import intersect_polygon_plane
-from .types import Texture3D, AffineLike, as_affine, check_valid_texture_3d, SamplerPointLike, sampler_point_3d
+from .types import SamplerResultND, Texture3D, AffineLike, as_affine, check_valid_texture_3d, SamplerPointLike, \
+    sampler_point_3d
 from .utils import eye_1d
 
 
 def sample_2d(
         texture: Texture3D,
         affine: AffineLike,
-        out_axis: int,
         out_position: SamplerPointLike,
+        out_axis: int,
         out_bounds: Optional[np.ndarray] = None,
-        out_resolution: Optional[Tuple[float, float]] = None):
+        out_resolution: Optional[Tuple[float, float]] = None) -> Optional[SamplerResultND]:
     """
     Sample 2d.
 
@@ -119,4 +120,4 @@ def sample_2d(
     #  back forth to get more accurate axis_lims
     axis_lims = rect[var_dims][:, (True, False, True, False)]
 
-    return rastered, axis_lims, axis_indices
+    return SamplerResultND(rastered, axis_lims)

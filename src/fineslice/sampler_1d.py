@@ -1,11 +1,10 @@
-from typing import Any
+from typing import Any, Optional
 
 import numpy as np
 
-from .debug_utils import plot_poly
 from .intersect import intersect_line_plane
 from .types import as_affine, AffineLike, Texture3D, check_valid_texture_3d, SamplerPointLike, sampler_point_3d, \
-    sampler_point_1d, as_sampler_points
+    sampler_point_1d, as_sampler_points, SamplerResultND
 
 
 def sample_1d(
@@ -14,8 +13,8 @@ def sample_1d(
         out_position: SamplerPointLike,
         out_axis: int,
         # out_bounds: Optional[Iterable] = None,
-        out_resolution: int = None
-) -> Any:
+        out_resolution: Optional[int] = None
+) -> Optional[SamplerResultND]:
     """
 
 
@@ -82,19 +81,23 @@ def sample_1d(
         intersects_cube = intersects_cube[:, diff_idx]
         intersects_cube_trans = intersects_cube_trans[:, diff_idx]
 
-    line_origin = intersects_cube_trans[:, 0]
-    line_target = intersects_cube_trans[:, 1]
-    line_dir = line_target - line_origin
+    if out_resolution is not None:
+        res = out_resolution
+    else:
 
-    # Find resolution in data space
+        # Find resolution in data space
 
-    mag = np.linalg.norm(line_dir)
-    res = int(np.ceil(mag)) + 1
+        line_origin = intersects_cube_trans[:, 0]
+        line_target = intersects_cube_trans[:, 1]
+        line_dir = line_target - line_origin
+
+        mag = np.linalg.norm(line_dir)
+        res = int(np.ceil(mag)) + 1
 
     lmin = np.min(intersects_cube[out_axis])
     lmax = np.max(intersects_cube[out_axis])
 
-    sample_grid = np.repeat(out_position[:,np.newaxis], repeats=res, axis=1)
+    sample_grid = np.repeat(out_position[:, np.newaxis], repeats=res, axis=1)
     sample_grid[out_axis] = np.mgrid[lmin:lmax:complex(res)]
 
     # transform sampling grid (and round for nearest neighbour TODO)
@@ -107,18 +110,4 @@ def sample_1d(
     x = sample_grid_trans
     rastered = texture[x[0], x[1], x[2]]
 
-    return rastered, (lmin, lmax)
-    """
-    from matplotlib import pyplot as plt
-    # mpl.use('Qt5Agg')
-    plot_poly(
-        np.hstack((
-            vecs_trans,
-            out_position[:, np.newaxis], (out_position + out_normal)[:, np.newaxis],
-            intersects_cube
-        )),
-        edges=[[0, 2], [0, 3], [0, 4], [7, 8]]
-    )
-    plt.show()"""
-
-    # Find line vector
+    return SamplerResultND(rastered, np.array((lmin, lmax)))
