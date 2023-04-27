@@ -2,7 +2,8 @@ from typing import Any, Optional
 
 import numpy as np
 
-from .types import SamplerResult0D, as_affine, AffineLike, SamplerPointLike, sampler_point_3d, Texture3D, check_valid_texture_3d
+from .types import SamplerResult0D, as_affine, AffineLike, SamplerPointLike, sampler_point_3d, Texture3D, \
+    check_valid_texture_3d
 
 
 def sample_0d(

@@ -2,6 +2,7 @@ from typing import Union, Optional
 
 import numpy as np
 
+
 def eye_1d(
         n: int,
         eye_index: int,
