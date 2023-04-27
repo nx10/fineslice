@@ -92,11 +92,11 @@ def sampler_point_3d(sampler_point_like: SamplerPointLike, dtype=np.float64) -> 
     :param dtype: Output dtype.
     :return:
     """
-    values = np.asanyarray(sampler_point_like)
+    values = np.ravel(sampler_point_like)
     arr = np.array([0, 0, 0, 1], dtype=dtype)
     var_axes = np.full((4,), True)
     var_axes[3] = False
-    arr[var_axes] = values
+    arr[var_axes] = values[:3]
     return arr
 
 
