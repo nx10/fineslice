@@ -1,9 +1,6 @@
-from typing import Union, Optional, Iterable, Sized
+from typing import Union, Optional
 
 import numpy as np
-
-from fineslice.types import SamplerPoint
-
 
 def eye_1d(
         n: int,

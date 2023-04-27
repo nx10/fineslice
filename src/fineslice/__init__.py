@@ -1,3 +1,7 @@
+"""
+fineslice.
+"""
+
 from .affine import affine_invert, affine_identity, affine_translate, affine_scale, affine_shear, affine_rotate, \
     affine_rotate_degrees
 from .bounds import bounds_cube, bounds_where, bounds_manual

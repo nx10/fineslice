@@ -17,6 +17,7 @@ def as_affine(affine_like: AffineLike, dtype=np.float64) -> Affine:
 
 # Texture3D
 
+# pylint: too-few-public-methods
 class Texture3D(Protocol):
     ndim: int
     shape: Tuple[int, ...]

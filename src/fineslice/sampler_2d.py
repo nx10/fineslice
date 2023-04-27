@@ -115,9 +115,6 @@ def sample_2d(
     x = sample_grid_trans[0:3].reshape((3, wn, hn))
     rastered = texture[x[0], x[1], x[2]]
 
-    # select axis labels
-    axis_indices = np.arange(3)[var_dims[0:3]]
-
     # Todo: convert rounded (for nearest neighbour) estimates
     #  back forth to get more accurate axis_lims
     axis_lims = rect[var_dims][:, (True, False, True, False)]
