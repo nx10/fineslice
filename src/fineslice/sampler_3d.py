@@ -14,7 +14,17 @@ def sample_3d(
         texture: Texture3D,
         affine: AffineLike,
         out_bounds: Optional[np.ndarray] = None,
-        out_dims: Optional[Tuple[float, float, float]] = None) -> Optional[SamplerResultND]:
+        out_resolution_scale: float = 1,
+        out_resolution: Optional[Tuple[float, float, float]] = None) -> Optional[SamplerResultND]:
+    """
+
+    :param texture:
+    :param affine:
+    :param out_bounds:
+    :param out_resolution_scale:
+    :param out_resolution:
+    :return:
+    """
     check_valid_texture_3d(texture)
 
     affine = as_affine(affine)
@@ -34,15 +44,15 @@ def sample_3d(
     sampling_cube_ds = np.dot(affine_inv, sampling_cube_rs).astype(int)  # todo
 
     # Sampling grid dimensions (data space)
-    if out_dims is None:
+    if out_resolution is None:
         axis_len = np.zeros((3,))
         for v0, v1, va in cube_edges_axes:
             edge_len = np.linalg.norm(sampling_cube_ds[:, v0] - sampling_cube_ds[:, v1])
             if edge_len > axis_len[va]:
                 axis_len[va] = edge_len
-        axis_len = axis_len.astype(int)  # todo
+        axis_len = (axis_len * out_resolution_scale).astype(int)  # todo
     else:
-        axis_len = out_dims
+        axis_len = out_resolution
 
     minmax_data = sampling_cube_bounds_rs
     minmax_data_n = axis_len
@@ -80,4 +90,4 @@ def sample_3d(
     #  back forth to get more accurate axis_lims
     axis_lims = sampling_cube_bounds_rs[0:3]
 
-    return SamplerResultND(rastered, axis_lims)  # , RAS_SPACE_LABELS
+    return SamplerResultND(rastered, axis_lims)

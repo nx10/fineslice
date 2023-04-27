@@ -15,7 +15,9 @@ def sample_2d(
         out_position: SamplerPointLike,
         out_axis: int,
         out_bounds: Optional[np.ndarray] = None,
-        out_resolution: Optional[Tuple[float, float]] = None) -> Optional[SamplerResultND]:
+        out_resolution_scale: float = 1,
+        out_resolution: Optional[Tuple[float, float]] = None
+) -> Optional[SamplerResultND]:
     """
     Sample 2d.
 
@@ -89,8 +91,8 @@ def sample_2d(
 
         w = max(w1, w2)
         h = max(h1, h2)
-        wn = int(np.ceil(w)) + 1
-        hn = int(np.ceil(h)) + 1
+        wn = int(np.ceil(w * out_resolution_scale)) + 1
+        hn = int(np.ceil(h * out_resolution_scale)) + 1
     else:
         hn, wn = out_resolution
 

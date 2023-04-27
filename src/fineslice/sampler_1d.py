@@ -13,16 +13,16 @@ def sample_1d(
         out_position: SamplerPointLike,
         out_axis: int,
         # out_bounds: Optional[Iterable] = None,
+        out_resolution_scale: float = 1,
         out_resolution: Optional[int] = None
 ) -> Optional[SamplerResultND]:
     """
-
 
     :param texture:
     :param affine:
     :param out_position:
     :param out_axis:
-    :param out_bounds:
+    :param out_resolution_scale:
     :param out_resolution:
     :return:
     """
@@ -92,7 +92,7 @@ def sample_1d(
         line_dir = line_target - line_origin
 
         mag = np.linalg.norm(line_dir)
-        res = int(np.ceil(mag)) + 1
+        res = int(np.ceil(mag * out_resolution_scale)) + 1
 
     lmin = np.min(intersects_cube[out_axis])
     lmax = np.max(intersects_cube[out_axis])
