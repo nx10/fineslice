@@ -10,12 +10,12 @@ def test_slicer_2d() -> None:
     texture = np.reshape(np.arange(3 * 3 * 3, dtype=np.float64), (3, 3, 3))
     affine = fine.affine_identity()
 
-    rastered_0_0, _ = fine.sample_2d(texture, affine, out_axis=0, out_position=0)
-    rastered_0_1, axis_lims_0_1 = fine.sample_2d(
+    rastered_0_0, _ = fine.sample_2d(texture, affine, out_axis=0, out_position=0)  # type: ignore
+    rastered_0_1, axis_lims_0_1 = fine.sample_2d(  # type: ignore
         texture, affine, out_axis=0, out_position=1
     )
-    rastered_1_0, _ = fine.sample_2d(texture, affine, out_axis=1, out_position=0)
-    rastered_2_0, _ = fine.sample_2d(texture, affine, out_axis=2, out_position=0)
+    rastered_1_0, _ = fine.sample_2d(texture, affine, out_axis=1, out_position=0)  # type: ignore
+    rastered_2_0, _ = fine.sample_2d(texture, affine, out_axis=2, out_position=0)  # type: ignore
 
     assert np.allclose(
         rastered_0_0, np.array([[0.0, 1.0, 2.0], [3.0, 4.0, 5.0], [6.0, 7.0, 8.0]])

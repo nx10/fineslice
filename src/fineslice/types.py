@@ -29,7 +29,11 @@ def as_affine(
 class Texture3D(Protocol):
     """3D texture type."""
 
-    ndim: int
+    @property
+    def ndim(self) -> int:
+        """Number of dimensions."""
+        ...
+
     shape: Tuple[int, ...]
 
     def __getitem__(self, key: Any) -> Any:  # noqa: ANN401
