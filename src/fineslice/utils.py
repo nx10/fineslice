@@ -10,15 +10,18 @@ def eye_1d(
         fill_value: Union[int, float, complex, np.ndarray] = 0,
         dtype: Optional[object] = None
 ):
-    """
-    Similar to ``np.full`` but a single index is changed.
+    """Similar to ``np.full`` but a single index is changed.
 
-    :param n: Vector length.
-    :param eye_index: Index.
-    :param eye_value: Index value.
-    :param fill_value: Fill value.
-    :param dtype: The desired data-type for the array The default, None, means ``np.array(f).dtype``.
-    :return:
+    Args:
+        n: Vector length.
+        eye_index: Index.
+        eye_value: Index value.
+        fill_value: Fill value.
+        dtype: The desired data-type for the array The default, None,
+            means ``np.array(f).dtype``.
+
+    Returns:
+
     """
     a = np.full((n,), fill_value=fill_value, dtype=dtype)
     a[eye_index] = eye_value

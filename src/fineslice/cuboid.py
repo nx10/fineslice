@@ -7,11 +7,14 @@ from .types import SamplerPoints
 
 
 def cuboid(shape: Iterable, dtype: npt.DTypeLike = None) -> np.ndarray:
-    """
-    Get vertices of a cuboid defined by shape
-    :param shape: Cuboid dimensions (x, y, z)
-    :param dtype: Output dtype
-    :return: vertices slicer points array
+    """Get vertices of a cuboid defined by shape
+
+    Args:
+        shape: Cuboid dimensions (x, y, z)
+        dtype: Output dtype
+
+    Returns:
+        vertices slicer points array
     """
     x, y, z = (i - 1 for i in shape)
     return np.array([
@@ -27,12 +30,14 @@ def cuboid(shape: Iterable, dtype: npt.DTypeLike = None) -> np.ndarray:
 
 
 def cuboid_from_bounds(bounds: SamplerPoints, dtype: npt.DTypeLike = None) -> np.ndarray:
-    """
-    Get vertices of a cuboid defined by bounds.
+    """Get vertices of a cuboid defined by bounds.
 
-    :param bounds: slicer bounds
-    :param dtype: Output dtype
-    :return: vertices slicer points array
+    Args:
+        bounds: slicer bounds
+        dtype: Output dtype
+
+    Returns:
+        vertices slicer points array
     """
     x0, y0, z0 = (i - 1 for i in bounds[0:3, 0])
     x1, y1, z1 = (i - 1 for i in bounds[0:3, 1])
@@ -66,10 +71,10 @@ _CUBOID_EDGES.setflags(write=False)  # TODO attempt at making it immutable
 
 
 def cuboid_edges():
-    """
-    Get edges of cube defined by ``cuboid()``.
+    """Get edges of cube defined by ``cuboid()``.
 
-    :return: ``[[vertex_from, vertex_to]*]``
+    Returns:
+        ``[[vertex_from, vertex_to]*]``
     """
     return _CUBOID_EDGES
 
@@ -84,9 +89,9 @@ _CUBOID_EDGES_AXES.setflags(write=False)
 
 
 def cuboid_edges_axes():
-    """
-    Get edges and their axes of cube defined by ``cuboid()``.
+    """Get edges and their axes of cube defined by ``cuboid()``.
 
-    :return: ``[[vertex_from, vertex_to, edge_axis]*]``
+    Returns:
+        ``[[vertex_from, vertex_to, edge_axis]*]``
     """
     return _CUBOID_EDGES_AXES

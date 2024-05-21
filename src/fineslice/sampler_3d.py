@@ -17,13 +17,15 @@ def sample_3d(
         out_resolution_scale: float = 1,
         out_resolution: Optional[Tuple[float, float, float]] = None) -> Optional[SamplerResultND]:
     """
+    Args:
+        texture
+        affine
+        out_bounds
+        out_resolution_scale
+        out_resolution
 
-    :param texture:
-    :param affine:
-    :param out_bounds:
-    :param out_resolution_scale:
-    :param out_resolution:
-    :return:
+    Returns:
+
     """
     check_valid_texture_3d(texture)
 

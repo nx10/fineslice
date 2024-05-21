@@ -1,6 +1,4 @@
-"""
-fineslice.
-"""
+"""fineslice."""
 
 from .affine import affine_invert, affine_identity, affine_translate, affine_scale, affine_shear, affine_rotate, \
     affine_rotate_degrees

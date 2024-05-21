@@ -18,16 +18,18 @@ def sample_2d(
         out_resolution_scale: float = 1,
         out_resolution: Optional[Tuple[float, float]] = None
 ) -> Optional[SamplerResultND]:
-    """
-    Sample 2d.
+    """Sample 2d.
 
-    :param texture:
-    :param affine:
-    :param out_axis:
-    :param out_position:
-    :param out_bounds:
-    :param out_resolution:
-    :return:
+    Args:
+        texture
+        affine
+        out_axis
+        out_position
+        out_bounds
+        out_resolution
+
+    Returns:
+
     """
     check_valid_texture_3d(texture)
     out_position = sampler_point_3d(out_position)

@@ -12,14 +12,17 @@ def sample_0d(
         out_position: SamplerPointLike,
         out_default: Any = None
 ) -> Optional[SamplerResult0D]:
-    """
-    Sample a single point from a texture.
+    """Sample a single point from a texture.
 
-    :param texture: Image texture.
-    :param affine: Affine matrix.
-    :param out_position: Point to sample. E.g. (1, 2, 3).
-    :param out_default: Default value that will be returned when sampling outside of texture bounds.
-    :return: Sampled value (type equals texture array type).
+    Args:
+        texture: Image texture.
+        affine: Affine matrix.
+        out_position: Point to sample. E.g. (1, 2, 3).
+        out_default: Default value that will be returned when sampling
+            outside of texture bounds.
+
+    Returns:
+        Sampled value (type equals texture array type).
     """
     check_valid_texture_3d(texture)
 

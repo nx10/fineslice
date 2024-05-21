@@ -2,13 +2,16 @@ import numpy as np
 
 
 def plot_poly(vertices, edges=None, inters=None, labels=None, show=False):
-    """
-    Plot polygon
-    :param vertices:
-    :param edges:
-    :param inters:
-    :param labels:
-    :return:
+    """Plot polygon
+
+    Args:
+        vertices
+        edges
+        inters
+        labels
+
+    Returns:
+
     """
     try:
         from matplotlib import pyplot as plt  # pylint: disable=import-outside-toplevel

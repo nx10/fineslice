@@ -17,14 +17,16 @@ def sample_1d(
         out_resolution: Optional[int] = None
 ) -> Optional[SamplerResultND]:
     """
+    Args:
+        texture
+        affine
+        out_position
+        out_axis
+        out_resolution_scale
+        out_resolution
 
-    :param texture:
-    :param affine:
-    :param out_position:
-    :param out_axis:
-    :param out_resolution_scale:
-    :param out_resolution:
-    :return:
+    Returns:
+
     """
     check_valid_texture_3d(texture)
 

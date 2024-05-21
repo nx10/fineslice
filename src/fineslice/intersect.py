@@ -9,8 +9,7 @@ def intersect_line_plane(
         plane_origin: np.ndarray,
         plane_normal: np.ndarray,
         epsilon=1e-6) -> Optional[np.ndarray]:
-    """
-    Find intersection point of a line with a plane.
+    """Find intersection point of a line with a plane.
     Returns None if there is no intersection.
 
     TODO: Can this be sped up if either plane or line is axis aligned?
@@ -33,8 +32,7 @@ def intersect_line_segment_plane(
         plane_origin: np.ndarray,
         plane_normal: np.ndarray,
         epsilon=1e-6) -> Optional[np.ndarray]:
-    """
-    Find intersection point of a line segment (between 2 points) with a plane.
+    """Find intersection point of a line segment (between 2 points) with a plane.
     Returns None if there is no intersection.
     """
     direction = point2 - point1
@@ -67,14 +65,16 @@ def intersect_polygon_plane(
         plane_origin: np.ndarray,
         plane_normal: np.ndarray
 ) -> Optional[np.ndarray]:
-    """
-    Intersect polygon with plane. TODO
+    """Intersect polygon with plane. TODO
 
-    :param vertices:
-    :param edges:
-    :param plane_origin:
-    :param plane_normal:
-    :return:
+    Args:
+        vertices
+        edges
+        plane_origin
+        plane_normal
+
+    Returns:
+
     """
     inters = []
     for e in edges:

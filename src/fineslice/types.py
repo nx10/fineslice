@@ -38,23 +38,27 @@ SamplerPointLike = Union[np.ndarray, Iterable, int, float]
 
 
 def sampler_point_0d(dtype=np.float64) -> SamplerPoint:
-    """
-    Creates origin sampler point (0,0,0).
+    """Creates origin sampler point (0,0,0).
 
-    :param dtype:
-    :return:
+    Args:
+        dtype
+
+    Returns:
+
     """
     return np.array([0, 0, 0, 1], dtype=dtype)
 
 
 def sampler_point_1d(value: any, axis: int, dtype=np.float64) -> SamplerPoint:
-    """
-    Creates sampler point at (a, b, c) so that one axis is set to value and the other exes are 0.
+    """Creates sampler point at (a, b, c) so that one axis is set to value and the other exes are 0.
 
-    :param value:
-    :param axis:
-    :param dtype: Output dtype.
-    :return:
+    Args:
+        value
+        axis
+        dtype: Output dtype.
+
+    Returns:
+
     """
     if axis > 2:
         raise Exception('Axis must be < 3.')
@@ -65,13 +69,15 @@ def sampler_point_1d(value: any, axis: int, dtype=np.float64) -> SamplerPoint:
 
 def sampler_point_2d(value: Union[np.ndarray, Iterable, int, float], zero_axis: int,
                      dtype=np.float64) -> SamplerPoint:
-    """
-    Creates sampler point at (a, b, c) so that one axis is set to 0 and the other exes are broadcast from value.
+    """Creates sampler point at (a, b, c) so that one axis is set to 0 and the other exes are broadcast from value.
 
-    :param value:
-    :param zero_axis:
-    :param dtype: Output dtype.
-    :return:
+    Args:
+        value
+        zero_axis
+        dtype: Output dtype.
+
+    Returns:
+
     """
     if zero_axis > 2:
         raise Exception('Axis must be < 3.')
@@ -85,12 +91,14 @@ def sampler_point_2d(value: Union[np.ndarray, Iterable, int, float], zero_axis: 
 
 
 def sampler_point_3d(sampler_point_like: SamplerPointLike, dtype=np.float64) -> SamplerPoint:
-    """
-    Create sampler point from any array or scalar value.
+    """Create sampler point from any array or scalar value.
 
-    :param sampler_point_like:
-    :param dtype: Output dtype.
-    :return:
+    Args:
+        sampler_point_like
+        dtype: Output dtype.
+
+    Returns:
+
     """
     values = np.ravel(sampler_point_like)
     arr = np.array([0, 0, 0, 1], dtype=dtype)
