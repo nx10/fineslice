@@ -1,11 +1,88 @@
-[build-system]
-requires = ["setuptools>=42"]
-build-backend = "setuptools.build_meta"
+[tool.poetry]
+name = "fineslice"
+version = "0.1.0"
+description = "Affine slicer."
+authors = ["Florian Rupprecht <floruppr@gmail.com>"]
+license = "BSD 3-Clause License"
+readme = "README.md"
+packages = [{include = "fineslice", from = "src"}]
+
+[tool.poetry.dependencies]
+python = ">=3.9"
+numpy = "^1.21.2"
+
+[tool.poetry.group.dev.dependencies]
+pytest = "^8.2.1"
+mypy = "^1.10.0"
+pre-commit = "^3.7.1"
+pytest-cov = "^5.0.0"
+ruff = "^0.4.4"
+
+[tool.poetry.group.docs.dependencies]
+pdoc = "^14.5.0"
 
 [tool.pytest.ini_options]
 pythonpath = [
-  ".", "src"
+  "src"
 ]
 testpaths = [
-    "tests"
+  "tests"
 ]
+
+[tool.mypy]
+ignore_missing_imports = true
+
+[tool.ruff]
+exclude = [
+  ".bzr",
+  ".direnv",
+  ".eggs",
+  ".git",
+  ".git-rewrite",
+  ".hg",
+  ".mypy_cache",
+  ".nox",
+  ".pants.d",
+  ".pytype",
+  ".ruff_cache",
+  ".svn",
+  ".tox",
+  ".venv",
+  "__pypackages__",
+  "_build",
+  "buck-out",
+  "build",
+  "dist",
+  "node_modules",
+  "venv"
+]
+line-length = 88
+indent-width = 4
+src = ["src"]
+target-version = "py311"
+
+[tool.ruff.lint]
+select = ["ANN", "D", "E", "F", "I"]
+ignore = [
+  "ANN101",  # self should not be annotated.
+  "ANN102"  # cls should not be annotated.
+]
+fixable = ["ALL"]
+unfixable = []
+dummy-variable-rgx = "^(_+|(_+[a-zA-Z0-9_]*[a-zA-Z0-9]+?))$"
+
+[tool.ruff.lint.pydocstyle]
+convention = "google"
+
+[tool.ruff.lint.per-file-ignores]
+"tests/**/*.py" = []
+
+[tool.ruff.format]
+quote-style = "double"
+indent-style = "space"
+skip-magic-trailing-comma = false
+line-ending = "auto"
+
+[build-system]
+requires = ["poetry-core>=1.2.0"]
+build-backend = "poetry.core.masonry.api"
