@@ -1,15 +1,19 @@
+"""Find intersections between geometric objects."""
+
 from typing import Optional
 
 import numpy as np
 
 
 def intersect_line_plane(
-        line_origin: np.ndarray,
-        line_dir: np.ndarray,
-        plane_origin: np.ndarray,
-        plane_normal: np.ndarray,
-        epsilon=1e-6) -> Optional[np.ndarray]:
+    line_origin: np.ndarray,
+    line_dir: np.ndarray,
+    plane_origin: np.ndarray,
+    plane_normal: np.ndarray,
+    epsilon: float = 1e-6,
+) -> Optional[np.ndarray]:
     """Find intersection point of a line with a plane.
+
     Returns None if there is no intersection.
 
     TODO: Can this be sped up if either plane or line is axis aligned?
@@ -27,12 +31,14 @@ def intersect_line_plane(
 
 
 def intersect_line_segment_plane(
-        point1: np.ndarray,
-        point2: np.ndarray,
-        plane_origin: np.ndarray,
-        plane_normal: np.ndarray,
-        epsilon=1e-6) -> Optional[np.ndarray]:
+    point1: np.ndarray,
+    point2: np.ndarray,
+    plane_origin: np.ndarray,
+    plane_normal: np.ndarray,
+    epsilon: float = 1e-6,
+) -> Optional[np.ndarray]:
     """Find intersection point of a line segment (between 2 points) with a plane.
+
     Returns None if there is no intersection.
     """
     direction = point2 - point1
@@ -43,7 +49,7 @@ def intersect_line_segment_plane(
         line_dir=direction,
         plane_origin=plane_origin,
         plane_normal=plane_normal,
-        epsilon=epsilon
+        epsilon=epsilon,
     )
 
     if inter is None:
@@ -60,22 +66,12 @@ def intersect_line_segment_plane(
 
 
 def intersect_polygon_plane(
-        vertices: np.ndarray,
-        edges: np.ndarray,
-        plane_origin: np.ndarray,
-        plane_normal: np.ndarray
+    vertices: np.ndarray,
+    edges: np.ndarray,
+    plane_origin: np.ndarray,
+    plane_normal: np.ndarray,
 ) -> Optional[np.ndarray]:
-    """Intersect polygon with plane. TODO
-
-    Args:
-        vertices
-        edges
-        plane_origin
-        plane_normal
-
-    Returns:
-
-    """
+    """Intersect polygon with plane. TODO."""
     inters = []
     for e in edges:
         line = vertices[0:3, e]
@@ -84,7 +80,8 @@ def intersect_polygon_plane(
             point1=line[:, 0],
             point2=line[:, 1],
             plane_origin=plane_origin,
-            plane_normal=plane_normal)
+            plane_normal=plane_normal,
+        )
 
         if inter is not None:
             inters.append(inter)

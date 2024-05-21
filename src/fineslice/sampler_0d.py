@@ -1,16 +1,25 @@
+"""0D sampler for 3D textures."""
+
 from typing import Any, Optional
 
 import numpy as np
 
-from .types import SamplerResult0D, as_affine, AffineLike, SamplerPointLike, sampler_point_3d, Texture3D, \
-    check_valid_texture_3d
+from .types import (
+    AffineLike,
+    SamplerPointLike,
+    SamplerResult0D,
+    Texture3D,
+    as_affine,
+    check_valid_texture_3d,
+    sampler_point_3d,
+)
 
 
 def sample_0d(
-        texture: Texture3D,
-        affine: AffineLike,
-        out_position: SamplerPointLike,
-        out_default: Any = None
+    texture: Texture3D,
+    affine: AffineLike,
+    out_position: SamplerPointLike,
+    out_default: Any = None,  # noqa: ANN401
 ) -> Optional[SamplerResult0D]:
     """Sample a single point from a texture.
 

@@ -65,7 +65,7 @@ target-version = "py311"
 select = ["ANN", "D", "E", "F", "I"]
 ignore = [
   "ANN101",  # self should not be annotated.
-  "ANN102"  # cls should not be annotated.
+  "ANN102",  # cls should not be annotated.
 ]
 fixable = ["ALL"]
 unfixable = []

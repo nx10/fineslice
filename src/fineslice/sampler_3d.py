@@ -1,32 +1,33 @@
-from typing import Optional, Tuple
+"""3D texture sampler."""
+
+from typing import Optional, Tuple, Union
 
 import numpy as np
 
 from .cuboid import cuboid, cuboid_edges_axes, cuboid_from_bounds
-from .types import Texture3D, check_valid_texture_3d, AffineLike, as_affine, SamplerPoints, SamplerResultND
+from .types import (
+    AffineLike,
+    SamplerPoints,
+    SamplerResultND,
+    Texture3D,
+    as_affine,
+    check_valid_texture_3d,
+)
 
 
-def _minmax_spoints(points: SamplerPoints):
+def _minmax_spoints(points: SamplerPoints) -> np.ndarray:
+    """Get minmax bounds of sampler points."""
     return np.column_stack((np.min(points, axis=1), np.max(points, axis=1)))
 
 
 def sample_3d(
-        texture: Texture3D,
-        affine: AffineLike,
-        out_bounds: Optional[np.ndarray] = None,
-        out_resolution_scale: float = 1,
-        out_resolution: Optional[Tuple[float, float, float]] = None) -> Optional[SamplerResultND]:
-    """
-    Args:
-        texture
-        affine
-        out_bounds
-        out_resolution_scale
-        out_resolution
-
-    Returns:
-
-    """
+    texture: Texture3D,
+    affine: AffineLike,
+    out_bounds: Optional[np.ndarray] = None,
+    out_resolution_scale: float = 1,
+    out_resolution: Optional[Tuple[float, float, float]] = None,
+) -> Optional[SamplerResultND]:
+    """Sample a 3D texture."""
     check_valid_texture_3d(texture)
 
     affine = as_affine(affine)
@@ -46,6 +47,7 @@ def sample_3d(
     sampling_cube_ds = np.dot(affine_inv, sampling_cube_rs).astype(int)  # todo
 
     # Sampling grid dimensions (data space)
+    axis_len: Union[np.ndarray, Tuple[float, float, float]]
     if out_resolution is None:
         axis_len = np.zeros((3,))
         for v0, v1, va in cube_edges_axes:
@@ -63,17 +65,17 @@ def sample_3d(
     # print("minmax_data_n", minmax_data_n)
     # print("minmax_data_n_total", minmax_data_n_total)
 
-    # print(f'x = from {minmax_data[0, 0]} to {minmax_data[0, 1]} in {minmax_data_n[0]} steps')
-    # print(f'y = from {minmax_data[1, 0]} to {minmax_data[1, 1]} in {minmax_data_n[1]} steps')
-    # print(f'z = from {minmax_data[2, 0]} to {minmax_data[2, 1]} in {minmax_data_n[2]} steps')
+    # print(f'x = from {minmax_data[0, 0]} to {minmax_data[0, 1]} in {minmax_data_n[0]} steps')  # noqa: E501
+    # print(f'y = from {minmax_data[1, 0]} to {minmax_data[1, 1]} in {minmax_data_n[1]} steps')  # noqa: E501
+    # print(f'z = from {minmax_data[2, 0]} to {minmax_data[2, 1]} in {minmax_data_n[2]} steps')  # noqa: E501
 
     # Make sampling grid
-    sample_grid = np.full((4, minmax_data_n_total), fill_value=1, dtype=np.float64)
+    sample_grid = np.full((4, minmax_data_n_total), fill_value=1, dtype=np.float64)  # type: ignore
     sample_grid[0:3] = np.mgrid[
-                       minmax_data[0, 0]:minmax_data[0, 1]:complex(minmax_data_n[0]),
-                       minmax_data[1, 0]:minmax_data[1, 1]:complex(minmax_data_n[1]),
-                       minmax_data[2, 0]:minmax_data[2, 1]:complex(minmax_data_n[2])
-                       ].reshape(3, -1)
+        minmax_data[0, 0] : minmax_data[0, 1] : complex(minmax_data_n[0]),  # type: ignore
+        minmax_data[1, 0] : minmax_data[1, 1] : complex(minmax_data_n[1]),  # type: ignore
+        minmax_data[2, 0] : minmax_data[2, 1] : complex(minmax_data_n[2]),  # type: ignore
+    ].reshape(3, -1)
 
     # print("sampling_grid", sample_grid.shape)
 
@@ -84,7 +86,9 @@ def sample_3d(
     for i in range(3):
         sample_grid_trans[i] = sample_grid_trans[i].clip(0, texture.shape[i] - 1)
 
-    x = sample_grid_trans[0:3].reshape((3, minmax_data_n[0], minmax_data_n[1], minmax_data_n[2]))
+    x = sample_grid_trans[0:3].reshape(
+        (3, minmax_data_n[0], minmax_data_n[1], minmax_data_n[2])
+    )
 
     rastered = texture[x[0], x[1], x[2]]
 

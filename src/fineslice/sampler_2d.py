@@ -1,36 +1,33 @@
-from typing import Tuple, Optional
+"""0D sampler for 3D textures."""
+
+from typing import Optional, Tuple
 
 import numpy as np
 
 from .cuboid import cuboid, cuboid_edges
 from .intersect import intersect_polygon_plane
-from .types import SamplerResultND, Texture3D, AffineLike, as_affine, check_valid_texture_3d, SamplerPointLike, \
-    sampler_point_3d
+from .types import (
+    AffineLike,
+    SamplerPointLike,
+    SamplerResultND,
+    Texture3D,
+    as_affine,
+    check_valid_texture_3d,
+    sampler_point_3d,
+)
 from .utils import eye_1d
 
 
 def sample_2d(
-        texture: Texture3D,
-        affine: AffineLike,
-        out_position: SamplerPointLike,
-        out_axis: int,
-        out_bounds: Optional[np.ndarray] = None,
-        out_resolution_scale: float = 1,
-        out_resolution: Optional[Tuple[float, float]] = None
+    texture: Texture3D,
+    affine: AffineLike,
+    out_position: SamplerPointLike,
+    out_axis: int,
+    out_bounds: Optional[np.ndarray] = None,
+    out_resolution_scale: float = 1,
+    out_resolution: Optional[Tuple[float, float]] = None,
 ) -> Optional[SamplerResultND]:
-    """Sample 2d.
-
-    Args:
-        texture
-        affine
-        out_axis
-        out_position
-        out_bounds
-        out_resolution
-
-    Returns:
-
-    """
+    """Sample a 2D slice from a 3D texture."""
     check_valid_texture_3d(texture)
     out_position = sampler_point_3d(out_position)
 
@@ -44,9 +41,11 @@ def sample_2d(
     out_axis_offset = out_position[out_axis]
 
     inters = intersect_polygon_plane(
-        corners_trans, edges,
+        corners_trans,
+        edges,
         plane_origin=out_position[:3],
-        plane_normal=eye_1d(3, out_axis, dtype=np.float64))
+        plane_normal=eye_1d(3, out_axis, dtype=np.float64),
+    )
 
     # data cube does not intersect plane
     if inters is None or inters.shape[1] < 3:
@@ -77,10 +76,9 @@ def sample_2d(
 
     # sampling rectangle
     rect = np.full((4, 4), fill_value=1, dtype=np.float64)
-    rect[var_dims] = np.array([
-        [x_min, x_max, x_max, x_min],
-        [y_min, y_min, y_max, y_max]
-    ])
+    rect[var_dims] = np.array(
+        [[x_min, x_max, x_max, x_min], [y_min, y_min, y_max, y_max]]
+    )
     rect[out_axis] = out_axis_offset  # equals: inters[sample_axis, 0]
 
     # find minimum needed resolution (by measuring rectangle sides in data-space)
@@ -96,14 +94,13 @@ def sample_2d(
         wn = int(np.ceil(w * out_resolution_scale)) + 1
         hn = int(np.ceil(h * out_resolution_scale)) + 1
     else:
-        hn, wn = out_resolution
+        hn, wn = map(int, out_resolution)
 
     # create sampling grid
     sample_grid = np.full((4, wn * hn), fill_value=1, dtype=np.float64)
     sample_grid[var_dims] = np.mgrid[
-                            x_min:x_max:complex(wn),
-                            y_min:y_max:complex(hn)
-                            ].reshape(2, -1)
+        x_min : x_max : complex(wn), y_min : y_max : complex(hn)  # type: ignore
+    ].reshape(2, -1)
     sample_grid[out_axis] = out_axis_offset  # equals: inters[axis, 0]
 
     # transform sampling grid (and round for nearest neighbour TODO)

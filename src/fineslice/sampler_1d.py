@@ -1,33 +1,33 @@
-from typing import Any, Optional
+"""1D sampling of 3D textures."""
+
+from typing import List, Optional
 
 import numpy as np
 
 from .intersect import intersect_line_plane
-from .types import as_affine, AffineLike, Texture3D, check_valid_texture_3d, SamplerPointLike, sampler_point_3d, \
-    sampler_point_1d, as_sampler_points, SamplerResultND
+from .types import (
+    AffineLike,
+    SamplerPointLike,
+    SamplerResultND,
+    Texture3D,
+    as_affine,
+    as_sampler_points,
+    check_valid_texture_3d,
+    sampler_point_1d,
+    sampler_point_3d,
+)
 
 
 def sample_1d(
-        texture: Texture3D,
-        affine: AffineLike,
-        out_position: SamplerPointLike,
-        out_axis: int,
-        # out_bounds: Optional[Iterable] = None,
-        out_resolution_scale: float = 1,
-        out_resolution: Optional[int] = None
+    texture: Texture3D,
+    affine: AffineLike,
+    out_position: SamplerPointLike,
+    out_axis: int,
+    # out_bounds: Optional[Iterable] = None,
+    out_resolution_scale: float = 1,
+    out_resolution: Optional[int] = None,
 ) -> Optional[SamplerResultND]:
-    """
-    Args:
-        texture
-        affine
-        out_position
-        out_axis
-        out_resolution_scale
-        out_resolution
-
-    Returns:
-
-    """
+    """Sample a 1D line from a 3D texture."""
     check_valid_texture_3d(texture)
 
     out_position = sampler_point_3d(out_position)
@@ -36,34 +36,45 @@ def sample_1d(
     affine = as_affine(affine)
     affine_inv = np.linalg.inv(affine)
 
-    vecs = np.vstack([
-        np.vstack((
-            np.zeros(3, dtype=int),  # Origin
-            texture.shape,  # Data limit
-            np.eye(3, dtype=int)  # Axis directions
-
-        )).T, np.ones(5)
-    ])
+    vecs = np.vstack(
+        [
+            np.vstack(
+                (
+                    np.zeros(3, dtype=int),  # Origin
+                    texture.shape,  # Data limit
+                    np.eye(3, dtype=int),  # Axis directions
+                )
+            ).T,
+            np.ones(5),
+        ]
+    )
 
     vecs_trans = np.dot(affine, vecs)
     vecs_trans_origin = vecs_trans[:, 0, np.newaxis]
     vecs_origin = vecs[:, 0, np.newaxis]
     vecs_datalim = vecs[:, 1, np.newaxis]
 
-    unit_vecs = vecs_trans[:, 2:] - vecs_trans_origin  # Absolute directions (from new origin)
+    unit_vecs = (
+        vecs_trans[:, 2:] - vecs_trans_origin
+    )  # Absolute directions (from new origin)
 
-    intersects = []
-    for plane_origin in vecs_trans[:, :2].T:
-        for plane_normal in unit_vecs.T:
-            p = intersect_line_plane(out_position[:3], out_normal[:3], plane_origin[:3], plane_normal[:3])
-            if p is not None:
-                intersects.append(p)
-    intersects = as_sampler_points(intersects)
+    def _find_intersections() -> np.ndarray:
+        intersects: List[np.ndarray] = []
+        for plane_origin in vecs_trans[:, :2].T:
+            for plane_normal in unit_vecs.T:
+                p = intersect_line_plane(
+                    out_position[:3], out_normal[:3], plane_origin[:3], plane_normal[:3]
+                )
+                if p is not None:
+                    intersects.append(p)
+        return as_sampler_points(intersects)
+
+    intersects = _find_intersections()
     intersects_trans = np.dot(affine_inv, intersects)
     intersects_in_bounds = np.all(
-        ((vecs_origin - 1e-6) < intersects_trans) &
-        (intersects_trans < (vecs_datalim + 1e-6)),
-        axis=0
+        ((vecs_origin - 1e-6) < intersects_trans)
+        & (intersects_trans < (vecs_datalim + 1e-6)),
+        axis=0,
     )
 
     intersects_cube = intersects[:, intersects_in_bounds]
@@ -78,15 +89,19 @@ def sample_1d(
         # Select first and furthest from first:
         diff_idx = [
             0,
-            np.argmax(np.sum(intersects_cube[:, 1:] - intersects_cube[:, 0, np.newaxis], axis=0)) + 1
+            np.argmax(
+                np.sum(
+                    intersects_cube[:, 1:] - intersects_cube[:, 0, np.newaxis], axis=0
+                )
+            )
+            + 1,
         ]
-        intersects_cube = intersects_cube[:, diff_idx]
+        intersects_cube = intersects_cube[:, diff_idx]  # type: ignore
         intersects_cube_trans = intersects_cube_trans[:, diff_idx]
 
     if out_resolution is not None:
         res = out_resolution
     else:
-
         # Find resolution in data space
 
         line_origin = intersects_cube_trans[:, 0]
@@ -100,7 +115,7 @@ def sample_1d(
     lmax = np.max(intersects_cube[out_axis])
 
     sample_grid = np.repeat(out_position[:, np.newaxis], repeats=res, axis=1)
-    sample_grid[out_axis] = np.mgrid[lmin:lmax:complex(res)]
+    sample_grid[out_axis] = np.mgrid[lmin : lmax : complex(res)]  # type: ignore
 
     # transform sampling grid (and round for nearest neighbour TODO)
     sample_grid_trans = np.dot(affine_inv, sample_grid).astype(int)
