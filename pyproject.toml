@@ -9,7 +9,7 @@ packages = [{include = "fineslice", from = "src"}]
 
 [tool.poetry.dependencies]
 python = ">=3.9"
-numpy = "^1.21.2"
+numpy = ">=1.21.2,<3.0.0"
 
 [tool.poetry.group.dev.dependencies]
 pytest = "^8.2.1"
